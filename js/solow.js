@@ -64,7 +64,7 @@ $(document).ready(function () {
         var YSeries = [];
         var CSeries = [];
         var ISeries = [];
-        var eSeries = [e0/(1+g1)];
+        var eSeries = [1];
 
         var kSeries2 = [k0];
         var ySeries2 = [];
@@ -74,12 +74,12 @@ $(document).ready(function () {
         var YSeries2 = [];
         var CSeries2 = [];
         var ISeries2 = [];
-        var eSeries2 = [e0/(1+g1)];
+        var eSeries2 = [1];
         // nSeries = [0];
 
         var k =k0;
         var kLag = k0;
-        var eff=1;
+        var eff=0;
         var effLag=0;
         var y=0;
         var k2 =k0;
@@ -98,10 +98,10 @@ $(document).ready(function () {
                 ySeries.push(a1*Math.pow(kLag,alpha1));
                 cSeries.push((1-s1)*a1*Math.pow(kLag,alpha1));
                 iSeries.push(s1*a1*Math.pow(kLag,alpha1));
-                KSeries.push(eff*kLag);
-                YSeries.push(eff*a1*Math.pow(kLag,alpha1));
-                CSeries.push(eff*(1-s1)*a1*Math.pow(kLag,alpha1));
-                ISeries.push(eff*s1*a1*Math.pow(kLag,alpha1));
+                KSeries.push(effLag*kLag);
+                YSeries.push(effLag*a1*Math.pow(kLag,alpha1));
+                CSeries.push(effLag*(1-s1)*a1*Math.pow(kLag,alpha1));
+                ISeries.push(effLag*s1*a1*Math.pow(kLag,alpha1));
 
                 effLag2 = eSeries2[eSeries2.length-1];
                 eff2 = (1+g1)*effLag2;
@@ -112,10 +112,10 @@ $(document).ready(function () {
                 ySeries2.push(a1*Math.pow(kLag2,alpha1));
                 cSeries2.push((1-s1)*a1*Math.pow(kLag2,alpha1));
                 iSeries2.push(s1*a1*Math.pow(kLag2,alpha1));
-                KSeries2.push(eff2*kLag2);
-                YSeries2.push(eff2*a1*Math.pow(kLag2,alpha1));
-                CSeries2.push(eff2*(1-s1)*a1*Math.pow(kLag2,alpha1));
-                ISeries2.push(eff2*s1*a1*Math.pow(kLag2,alpha1));
+                KSeries2.push(effLag2*kLag2);
+                YSeries2.push(effLag2*a1*Math.pow(kLag2,alpha1));
+                CSeries2.push(effLag2*(1-s1)*a1*Math.pow(kLag2,alpha1));
+                ISeries2.push(effLag2*s1*a1*Math.pow(kLag2,alpha1));
             }
             else {
                 effLag = eSeries[eSeries.length-1];
@@ -127,10 +127,10 @@ $(document).ready(function () {
                 ySeries.push(a2*Math.pow(kLag,alpha2));
                 cSeries.push((1-s2)*a2*Math.pow(kLag,alpha2));
                 iSeries.push(s2*a2*Math.pow(kLag,alpha2));
-                KSeries.push(eff*kLag);
-                YSeries.push(eff*a2*Math.pow(kLag,alpha2));
-                CSeries.push(eff*(1-s2)*a2*Math.pow(kLag,alpha2));
-                ISeries.push(eff*s2*a2*Math.pow(kLag,alpha2));
+                KSeries.push(effLag*kLag);
+                YSeries.push(effLag*a2*Math.pow(kLag,alpha2));
+                CSeries.push(effLag*(1-s2)*a2*Math.pow(kLag,alpha2));
+                ISeries.push(effLag*s2*a2*Math.pow(kLag,alpha2));
 
                 effLag2 = eSeries2[eSeries2.length-1];
                 eff2 = (1+g1)*effLag2;
@@ -141,10 +141,10 @@ $(document).ready(function () {
                 ySeries2.push(a1*Math.pow(kLag2,alpha1));
                 cSeries2.push((1-s1)*a1*Math.pow(kLag2,alpha1));
                 iSeries2.push(s1*a1*Math.pow(kLag2,alpha1));
-                KSeries2.push(eff2*kLag2);
-                YSeries2.push(eff2*a1*Math.pow(kLag2,alpha1));
-                CSeries2.push(eff2*(1-s1)*a1*Math.pow(kLag2,alpha1));
-                ISeries2.push(eff2*s1*a1*Math.pow(kLag2,alpha1));
+                KSeries2.push(effLag2*kLag2);
+                YSeries2.push(effLag2*a1*Math.pow(kLag2,alpha1));
+                CSeries2.push(effLag2*(1-s1)*a1*Math.pow(kLag2,alpha1));
+                ISeries2.push(effLag2*s1*a1*Math.pow(kLag2,alpha1));
 
 
             }
