@@ -28,7 +28,7 @@
     
     
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
-    <title>Decentralized RBC Model Simulation Tool</title>
+    <title>Centralized RBC Model Simulation Tool</title>
 
     <link rel="stylesheet" href="css/foundation.css" />
     <link href="css/app.css" type="text/css" rel="stylesheet" />
@@ -43,7 +43,7 @@
     <script type="text/javascript" async
       src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
     </script>
-
+    <script src="js/ziggurat.js"></script>
     <script src="js/centralized-rbc.js"></script>
     <script type="text/javascript" src="js/sim-0.26.js"></script>
     <script src="js/numeric-1.2.6.js"></script>
@@ -86,14 +86,14 @@
       <h4>Background</h4>
       <p>This tool simulates the basic centralized RBC model.: 
         \begin{align}
-          C^{-\sigma}_t & = \beta E_t \left[ C_{t+1}^{-\sigma}\left(\alpha A_{t+1} K_{t+1}^{\alpha - 1}L_{t+1}^{1 - \alpha} + 1 - \delta\right)\right], \label{euler}\tag{1}\\
-          \phi (1 - L_t )^{-\eta} & = (1-\alpha)C_t^{-\sigma}A_t K_t^{\alpha}L_t^{-\alpha}, \label{labor}\tag{2}\\
-          Y_t & = A_t K^{\alpha}_t L^{1-\alpha}_t, \label{production}\tag{3}\\
-          Y_t & = C_t + I_t, \label{clearing}\tag{4}\\
-          I_t & = K_{t+1} - (1-\delta)K_t, \label{capital}\tag{5}\\
-          \log A_{t+1} & = \rho \log A_{t} + \epsilon_{t+1}, \label{tfp}\tag{6}\\
+          C^{-\sigma}_t & = \beta E_t \left[ C_{t+1}^{-\sigma}\left(\alpha A_{t+1} K_{t+1}^{\alpha - 1}L_{t+1}^{1 - \alpha} + 1 - \delta\right)\right] \label{euler}\tag{1}\\
+          \varphi (1 - L_t ) & = (1-\alpha)C_t^{-\sigma}A_t K_t^{\alpha}L_t^{-\alpha} \label{labor}\tag{2}\\
+          Y_t & = A_t K^{\alpha}_t L^{1-\alpha}_t \label{production}\tag{3}\\
+          Y_t & = C_t + I_t \label{clearing}\tag{4}\\
+          I_t & = K_{t+1} - (1-\delta)K_t \label{capital}\tag{5}\\
+          \log A_{t+1} & = \rho \log A_{t} + \epsilon_{t+1} \label{tfp}\tag{6}\\
         \end{align}
-      where \(\epsilon_{t+1}\sim\mathcal{N}(0,\sigma_{\epsilon}^2)\)</p>
+      where \(\epsilon_{t+1}\sim\mathcal{N}(0,\sigma_{\epsilon}^2)\). The tool constructs a log-linear approximation of the equilibrium conditions and solves for the equilibrium values of the endogenous variables in terms of the state variables \(A_t\) and \(K_t\). <!-- Notes on the linearization and solution process are available here: LINK --></p>
 
       <h4>Instructions</h4>
       <p>Choose the values the parameters. Then choose the number of periods for the simulation and select which type of simulation that you wish to perform:
@@ -101,7 +101,7 @@
           <li><strong>Stochastic simulation</strong>: a new random value for the white noise process \(\epsilon_t\) will be drawn for each period.</li> 
           <li><strong>Impulse response</strong>: \(\epsilon_t\) will be set to \(\sigma_{\epsilon}\) in period 1 and to 0 in all subsequent periods.</li>
         </ol>
-      Use the dropdown menu in the upper-right corner of each plot to download the simulated data in csv format.
+      Simulated data are in units of log-deviations of each variable from its steady state. Use the dropdown menu in the upper-right corner of each plot to download the simulated data in csv format.
       <hr/></p>
     </div>
   </div>
@@ -132,36 +132,36 @@
           <legend>Parameters</legend>
           <div class="row">
             <div class="large-4 columns">
-              <label for="alpha">Capital share of income (<em>&#945;</em>)</label>
-              <input id="alpha" type="number" step="any" value="0.33">
+              <label for="alpha">Capital share of income: \(\alpha\)</label>
+              <input id="alpha" type="number" step="any" value="0.35">
             </div>
             <div class="large-4 columns">
-              <label for="delta">Capital depreciation rate (<em>&#948;</em>)</label>
+              <label for="delta">Capital depreciation rate : \(\delta\)</label>
               <input id="delta" type="number" step="any" value="0.025">
             </div>
             <div class="large-4 columns">
-              <label for="beta">Subjective discount factor (<em>&#946;</em>)</label>
-              <input id="beta" type="number" step="any" min="0" value="0.98">
+              <label for="beta">Subjective discount factor: \(\beta\)</label>
+              <input id="beta" type="number" step="any" min="0" value="0.99">
             </div>
             <div class="large-4 columns">
-              <label for="sigma">Intertemporal elasticity of substitution (<em>&#963;</em>)</label>
-              <input id="sigma" type="number" step="any" min="0" value="1">
+              <label for="sigma">Intertemporal elasticity of substitution: \(\sigma\)</label>
+              <input id="sigma" type="number" step="any" min="0" value="1.5">
             </div>
-            <div class="large-4 columns">
-              <label for="eta">Utility weight on leisure (<em>&#951;</em>)</label>
+            <!-- <div class="large-4 columns">
+              <label for="eta">Utility weight on leisure: <em>&#951;</em></label>
               <input id="eta" type="number" step="any" min="0" value="1">
-            </div>
+            </div> -->
             <div class="large-4 columns">
-              <label for="phi">Frisch elasticity (<em>&#966;</em>)</label>
+              <label for="phi">Frisch elasticity: \(\varphi\)</label>
               <input id="phi" type="number" step="any" min="0" value="1.5">
             </div>
             <div class="large-4 columns">
-              <label for="rhoA">TFP autocorrelation (<em>&#961;<sub>A</sub></em>)</label>
-              <input id="rhoA" type="number" step="any" min="0" value="0.9">
+              <label for="rhoa">TFP autocorrelation: \(\rho\)</label>
+              <input id="rhoa" type="number" step="any" min="0" value="0.9">
             </div>
             <div class="large-4 columns">
-              <label for="sigA">TFP shock standard deviation (<em>&#963;<sub>&#949;</sub></em>)</label>
-              <input id="sigA" type="number" step="any" min="0" value=".01">
+              <label for="siga">TFP shock standard deviation: \(\sigma_{\epsilon}\)</label>
+              <input id="siga" type="number" step="any" min="0" value=".01">
             </div>
             <div class="large-4 columns">
             </div>
@@ -185,21 +185,10 @@
   <div class = "row">
     <div class="plotBox" id="plotBox">
       <div class="column21">
-        <div id="aProc" class="plot"></div>
+        <div id="aProcess" class="plot"></div>
       </div>
       <div class="column21">
-        <div id="yProc" class="plot"></div>
-      </div>
-    </div>
-  </div>
-
-  <div class = "row">
-    <div class="plotBox" id="plotBox">
-      <div class="column21">
-        <div id="kProc" class="plot"></div>
-      </div>
-      <div class="column21">
-        <div id="lProc" class="plot"></div>
+        <div id="kProcess" class="plot"></div>
       </div>
     </div>
   </div>
@@ -207,10 +196,21 @@
   <div class = "row">
     <div class="plotBox" id="plotBox">
       <div class="column21">
-        <div id="iProc" class="plot"></div>
+        <div id="cProcess" class="plot"></div>
       </div>
       <div class="column21">
-        <div id="cProc" class="plot"></div>
+        <div id="yProcess" class="plot"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class = "row">
+    <div class="plotBox" id="plotBox">
+      <div class="column21">
+        <div id="lProcess" class="plot"></div>
+      </div>
+      <div class="column21">
+        <div id="iProcess" class="plot"></div>
       </div>
     </div>
   </div>

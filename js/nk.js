@@ -99,6 +99,7 @@ $(document).ready(function () {
         
 
         var input = document.getElementById ("stochSim");
+        document.write(input)
             if (input.checked == true) {
                 for (i = 0; i <= periods; i++) {
                     e_g = z.nextGaussian()
