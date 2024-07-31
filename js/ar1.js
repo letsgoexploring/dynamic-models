@@ -264,7 +264,7 @@ function downloadFunction() {
         link.setAttribute("download", "ar1_data.csv");
         document.body.appendChild(link); // Required for FF
 
-        link.click(); // This will download the data file named "solow_data.csv".
+        link.click(); // This will download the data file named "ar1_data.csv".
     }
 
 }

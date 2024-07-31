@@ -38,8 +38,6 @@ $(document).ready(function () {
         var d2 = c2-rho_u*b2
         var d3 = c3-rho_v*b3
 
-        // document.write(a1,a2,a3)
-
         var interval = 0;
         var enableMarks = true;
 
@@ -99,7 +97,6 @@ $(document).ready(function () {
         
 
         var input = document.getElementById ("stochSim");
-        document.write(input)
             if (input.checked == true) {
                 for (i = 0; i <= periods; i++) {
                     e_g = z.nextGaussian()
@@ -174,10 +171,14 @@ $(document).ready(function () {
                 }
             };
 
-        // document.write(pi_series)
-        // sessionStorage.setItem('eSeries',JSON.stringify(eSeries));
-        // sessionStorage.setItem('xSeries',JSON.stringify(xSeries));
-        // sessionStorage.setItem('periods',periods);
+        sessionStorage.setItem('g_series',JSON.stringify(g_series));
+        sessionStorage.setItem('u_series',JSON.stringify(u_series));
+        sessionStorage.setItem('v_series',JSON.stringify(v_series));
+        sessionStorage.setItem('y_series',JSON.stringify(y_series));
+        sessionStorage.setItem('pi_series',JSON.stringify(pi_series));
+        sessionStorage.setItem('i_series',JSON.stringify(i_series));
+        sessionStorage.setItem('r_series',JSON.stringify(r_series));
+        sessionStorage.setItem('periods',periods);
 
 
         $('#shockProcesses').highcharts({
@@ -545,21 +546,31 @@ function reloadFunction() {
 
 function downloadFunction() {
     
-    if (sessionStorage.getItem('eSeries') == null){
+    if (sessionStorage.getItem('y_series') == null){
         window.alert('Run the simulation first.')
     } else {
-        var e = JSON.parse(sessionStorage.getItem('eSeries'));
-        var x = JSON.parse(sessionStorage.getItem('xSeries'));
+        var g_data = JSON.parse(sessionStorage.getItem('g_series'));
+        var u_data = JSON.parse(sessionStorage.getItem('u_series'));
+        var v_data = JSON.parse(sessionStorage.getItem('v_series'));
+        var y_data = JSON.parse(sessionStorage.getItem('y_series'));
+        var pi_data = JSON.parse(sessionStorage.getItem('pi_series'));
+        var i_data = JSON.parse(sessionStorage.getItem('i_series'));
+        var r_data = JSON.parse(sessionStorage.getItem('r_series'));
         var periods = parseInt(sessionStorage.getItem('periods'));
 
         var row1 = [];
         row1.push("Period");
-        row1.push("Shock process");
-        row1.push("AR(1) process");
+        row1.push("g");
+        row1.push("u");
+        row1.push("v");
+        row1.push("y");
+        row1.push("pi");
+        row1.push("i");
+        row1.push("r");
 
         var rows = [row1]
         for (i = 0; i <= periods; i++) {
-            rows.push([i,e[i],x[i]]);
+            rows.push([i,g_data[i],u_data[i],v_data[i],y_data[i],pi_data[i],i_data[i],r_data[i]]);
         }
 
         let csvContent = "data:text/csv;charset=utf-8,";
@@ -571,10 +582,10 @@ function downloadFunction() {
         var encodedUri = encodeURI(csvContent);
         var link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "ar1_data.csv");
+        link.setAttribute("download", "nk_data.csv");
         document.body.appendChild(link); // Required for FF
 
-        link.click(); // This will download the data file named "solow_data.csv".
+        link.click(); // This will download the data file named "nk_data.csv".
     }
 
 }
