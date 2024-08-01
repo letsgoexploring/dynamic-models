@@ -16,22 +16,35 @@ $(document).ready(function () {
         //  Compute steady state
         var A = 1
         var k_l_ratio = (alpha*A/(Math.pow(beta,-1)+delta-1))**(1/(1-alpha))
-        var L = 1 - phi/((1-alpha)*A*Math.pow(k_l_ratio,alpha))
+
+        // Solve nonlinear expression for L. References:
+        // https://web.archive.org/web/20180821215841/http://numericjs.com/documentation.html
+        // https://web.archive.org/web/20180821220006/http://numericjs.com/workshop.php?link=4d89edb9e548da48eaf09578f5b3a3aa215b18e3933141ff643b9b0e4865d27f
+        var rhs = Math.pow(A*k_l_ratio**alpha-delta*k_l_ratio,-sigma)*(1-alpha)*A*Math.pow(k_l_ratio,alpha)
+        objective = function(x) { return Math.pow(rhs - phi/(1-x)*Math.pow(x,sigma),2); }
+
+        // Guess is steady state L assuming sigma=1
+        // var L0 = 1/(1+phi*(k_l_ratio^alpha-delta*k_l_ratio)/(1-alpha)/k_l_ratio^alpha)
+        var result = numeric.uncmin(objective,[0.5])
+        var L = result['solution'][0]
+        console.log("steady state L: ",L)
+
+        // var L = 1 - phi/((1-alpha)*A*Math.pow(k_l_ratio,alpha))
         var K = k_l_ratio*L
         var Y = A*Math.pow(K,alpha)*Math.pow(L,(1-alpha))
         var I = delta*K
         var C = Y - I
         
-        // document.write("Steady state:","<br><br>")
-        // document.write("A: ",A,"<br>")
-        // document.write("K: ",K,"<br>")
-        // document.write("C: ",C,"<br>")
-        // document.write("L: ",L,"<br>")
-        // document.write("I: ",I,"<br>")
-        // document.write("Y: ",Y,"<br>")
-        // document.write("<br><br>")
+        // console.log("Steady state:","<br><br>")
+        // console.log("A: ",A,"<br>")
+        // console.log("K: ",K,"<br>")
+        // console.log("C: ",C,"<br>")
+        // console.log("L: ",L,"<br>")
+        // console.log("I: ",I,"<br>")
+        // console.log("Y: ",Y,"<br>")
+        // console.log("<br><br>")
 
-        // Construct the coefficients for the log-linearized model
+        // Construct coefficients for the log-linearized model
         var phi_1 = -(alpha+(1-alpha)*L)/(1-L)
         var phi_2 = (alpha-1)*(1-beta*(1-delta))
         var phi_3 = (1-alpha)*(1-beta*(1-delta))
@@ -40,6 +53,26 @@ $(document).ready(function () {
         var phi_6 = alpha*A*Math.pow(K,alpha-1)*Math.pow(L,1-alpha) + 1 - delta
         var phi_7 = -C/K
         var phi_8 = (1-alpha)*A*Math.pow(K,alpha-1)*Math.pow(L,1-alpha)
+        var phi_9 = phi_6-phi_8*alpha/phi_1
+        var phi_10 = phi_7+phi_8*sigma/phi_1
+        var phi_11 = phi_10*sigma/phi_1
+        var phi_12 = (phi_9*sigma-phi_10*alpha)/phi_1
+        var phi_13 = -phi_9*alpha/phi_1
+
+        
+        // Compute pi_4, pi_2, and pi_6
+        var a = phi_3*phi_11 - sigma*phi_10
+        var b = phi_2*phi_10-sigma*phi_9+phi_3*phi_12+sigma
+        var c = phi_2*phi_9+phi_3*phi_13
+        var pi_4 = (-b+Math.sqrt(Math.pow(b,2)-4*a*c))/2/a
+
+        var pi_6 = (sigma*pi_4-alpha)/phi_1
+        var pi_2 = phi_9 + phi_10*pi_4
+
+        // Compute some additional coefficients to make things easier
+        var phi_14 = phi_5 - phi_8/phi_1
+        var phi_15 = phi_7 +  phi_8*sigma/phi_1
+        var phi_16 = phi_2 - sigma*pi_4+phi_3*pi_6
 
         // document.write("Coefficients of linearized model:","<br><br>")
         // document.write("phi_1: ",phi_1,"<br>")
@@ -50,24 +83,23 @@ $(document).ready(function () {
         // document.write("phi_6: ",phi_6,"<br>")
         // document.write("phi_7: ",phi_7,"<br>")
         // document.write("phi_8: ",phi_8,"<br>")
+        // document.write("phi_9: ",phi_9,"<br>")
+        // document.write("phi_10: ",phi_10,"<br>")
+        // document.write("phi_11: ",phi_11,"<br>")
+        // document.write("phi_12: ",phi_12,"<br>")
+        // document.write("phi_13: ",phi_13,"<br>")
+        // document.write("phi_14: ",phi_14,"<br>")
+        // document.write("phi_15: ",phi_15,"<br>")
+        // document.write("phi_16: ",phi_16,"<br>")
         // document.write("<br><br>")
-        
-        // Compute the solution for the log-linearized model
-        var pi_5 = -1/phi_1
-        var pi_6 = -alpha/phi_1
 
-        var a = -sigma*phi_7
-        var b = phi_2*phi_7  +sigma- sigma*phi_6-sigma*phi_8*pi_6 + phi_3*pi_6*phi_7
-        var c = phi_2*phi_6+phi_2*phi_8*pi_6+phi_3*pi_6*(phi_6+phi_8*pi_6)
-        var pi_4 = (-b+Math.sqrt(b**2-4*a*c))/2/a
+        // Compute the reamining solution coefficients
+        var numerator = phi_4 - phi_16*phi_14+phi_3*rhoa/phi_1
+        var denominator = phi_16*phi_15 + sigma*(1-rhoa) + phi_3*rhoa*sigma/phi_1
+        var pi_3 = numerator/denominator
 
-        var top = phi_4 - phi_2*(phi_5+phi_8*pi_5)+sigma*pi_4*(phi_5+phi_8*pi_5) - phi_3*rhoa*pi_5-phi_3*pi_6*(phi_5+phi_8*pi_5)
-        var bottom = phi_2*phi_7-sigma*rhoa -sigma*pi_4*phi_7 +phi_3*pi_6*phi_7+sigma
-        var pi_3 = top/bottom
-        
-        var pi_1 = phi_5 + phi_7*pi_3 + phi_8*pi_5
-        var pi_2 = phi_6 + phi_7*pi_4 + phi_8*pi_6
-
+        var pi_1 = phi_14 + phi_15*pi_3
+        var pi_5 = (sigma*pi_3-1)/phi_1
         var pi_7 = Y/I*(1 + (1-alpha)*pi_5) - C/I*pi_3
         var pi_8 = Y/I*(alpha + (1-alpha)*pi_6) - C/I*pi_4
         var pi_9 = 1 + (1-alpha)*pi_5
@@ -683,13 +715,13 @@ function downloadFunction() {
         var periods = parseInt(sessionStorage.getItem('periods'));
 
         var row1 = [];
-        row1.push("Period");
-        row1.push("A");
-        row1.push("K");
-        row1.push("C");
-        row1.push("Y");
-        row1.push("L");
-        row1.push("I");
+        row1.push("period");
+        row1.push("a");
+        row1.push("k");
+        row1.push("c");
+        row1.push("y");
+        row1.push("l");
+        row1.push("i");
 
         var rows = [row1]
         for (i = 0; i <= periods; i++) {
