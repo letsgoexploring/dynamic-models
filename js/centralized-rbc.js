@@ -10,6 +10,7 @@ $(document).ready(function () {
         var beta = parseFloat($('#beta').val());
         var sigma = parseFloat($('#sigma').val());
         var phi = parseFloat($('#phi').val());
+        var eta = parseFloat($('#eta').val());
         var rhoa = parseFloat($('#rhoa').val());
         var siga = parseFloat($('#siga').val());
 
@@ -20,14 +21,20 @@ $(document).ready(function () {
         // Solve nonlinear expression for L. References:
         // https://web.archive.org/web/20180821215841/http://numericjs.com/documentation.html
         // https://web.archive.org/web/20180821220006/http://numericjs.com/workshop.php?link=4d89edb9e548da48eaf09578f5b3a3aa215b18e3933141ff643b9b0e4865d27f
-        var rhs = Math.pow(A*k_l_ratio**alpha-delta*k_l_ratio,-sigma)*(1-alpha)*A*Math.pow(k_l_ratio,alpha)
-        objective = function(x) { return Math.pow(rhs - phi/(1-x)*Math.pow(x,sigma),2); }
+        var rhs = Math.pow(A*k_l_ratio**alpha-delta*k_l_ratio,-sigma)*A*Math.pow(k_l_ratio,alpha)*(1-alpha)/phi
+        var log_rhs = Math.log(rhs)
 
-        // Guess is steady state L assuming sigma=1
-        // var L0 = 1/(1+phi*(k_l_ratio^alpha-delta*k_l_ratio)/(1-alpha)/k_l_ratio^alpha)
-        var result = numeric.uncmin(objective,[0.5])
+        // objective = function(x) { return Math.pow(rhs - Math.pow((1-x),-eta)*Math.pow(x,sigma),2); }
+        objective = function(x) { return Math.pow(log_rhs + eta*Math.log(1-x) - sigma*Math.log(x),2); }
+
+        L0 = (sigma + Math.log(rhs))/(sigma+eta)
+
+        var result = numeric.uncmin(objective,[0.1])
+
         var L = result['solution'][0]
         console.log("steady state L: ",L)
+        console.log("objective at L: ",objective(L))
+        console.log("objective at L: ",objective(0.39813726765942364))
 
         // var L = 1 - phi/((1-alpha)*A*Math.pow(k_l_ratio,alpha))
         var K = k_l_ratio*L
@@ -35,17 +42,18 @@ $(document).ready(function () {
         var I = delta*K
         var C = Y - I
         
-        // console.log("Steady state:","<br><br>")
-        // console.log("A: ",A,"<br>")
-        // console.log("K: ",K,"<br>")
-        // console.log("C: ",C,"<br>")
-        // console.log("L: ",L,"<br>")
-        // console.log("I: ",I,"<br>")
-        // console.log("Y: ",Y,"<br>")
+        console.log("Steady state:","<br><br>")
+        console.log("A: ",A,"<br>")
+        console.log("K: ",K,"<br>")
+        console.log("C: ",C,"<br>")
+        console.log("L: ",L,"<br>")
+        console.log("I: ",I,"<br>")
+        console.log("Y: ",Y,"<br>")
+        console.log("K/L: ",k_l_ratio,"<br>")
         // console.log("<br><br>")
 
         // Construct coefficients for the log-linearized model
-        var phi_1 = -(alpha+(1-alpha)*L)/(1-L)
+        var phi_1 = -(alpha+(eta-alpha)*L)/(1-L)
         var phi_2 = (alpha-1)*(1-beta*(1-delta))
         var phi_3 = (1-alpha)*(1-beta*(1-delta))
         var phi_4 = -rhoa*(1-beta*(1-delta))

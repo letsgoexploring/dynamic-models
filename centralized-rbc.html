@@ -28,7 +28,7 @@
     
     
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
-    <title>Centralized RBC Model Simulation Tool</title>
+    <title>Decentralized RBC Model Simulation Tool</title>
 
     <link rel="stylesheet" href="css/foundation.css" />
     <link href="css/app.css" type="text/css" rel="stylesheet" />
@@ -44,8 +44,6 @@
       src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
     </script>
     <script src="js/ziggurat.js"></script>
-    <!-- <script src="js/numeric-1.2.6.js"></script> -->
-    <script src="js/numeric.min.js"></script>
     <!-- <script src="js/algebra-0.2.6.min.js"></script> -->
     <script src="js/centralized-rbc.js"></script>
     <script type="text/javascript" src="js/sim-0.26.js"></script>
@@ -90,7 +88,7 @@
       <p>This tool simulates the basic centralized RBC model.: 
         \begin{align}
           C^{-\sigma}_t & = \beta E_t \left[ C_{t+1}^{-\sigma}\left(\alpha A_{t+1} K_{t+1}^{\alpha - 1}L_{t+1}^{1 - \alpha} + 1 - \delta\right)\right] \label{euler}\tag{1}\\
-          \varphi (1 - L_t ) & = (1-\alpha)C_t^{-\sigma}A_t K_t^{\alpha}L_t^{-\alpha} \label{labor}\tag{2}\\
+          \varphi (1 - L_t )^{-\eta} & = (1-\alpha)C_t^{-\sigma}A_t K_t^{\alpha}L_t^{-\alpha} \label{labor}\tag{2}\\
           Y_t & = A_t K^{\alpha}_t L^{1-\alpha}_t \label{production}\tag{3}\\
           Y_t & = C_t + I_t \label{clearing}\tag{4}\\
           I_t & = K_{t+1} - (1-\delta)K_t \label{capital}\tag{5}\\
@@ -150,12 +148,12 @@
               <label for="sigma">Intertemporal elasticity of substitution: \(\sigma\)</label>
               <input id="sigma" type="number" step="any" min="0" value="1.5">
             </div>
-            <!-- <div class="large-4 columns">
-              <label for="eta">Utility weight on leisure: <em>&#951;</em></label>
-              <input id="eta" type="number" step="any" min="0" value="1">
-            </div> -->
             <div class="large-4 columns">
-              <label for="phi">Frisch elasticity: \(\varphi\)</label>
+              <label for="eta">Utility exponent on leisure: \(\eta\)</label>
+              <input id="eta" type="number" step="any" min="0" value="1">
+            </div>
+            <div class="large-4 columns">
+              <label for="phi">Weight on utility from leisure: \(\varphi\)</label>
               <input id="phi" type="number" step="any" min="0" value="1.5">
             </div>
             <div class="large-4 columns">
