@@ -94,7 +94,9 @@
           I_t & = K_{t+1} - (1-\delta)K_t \label{capital}\tag{5}\\
           \log A_{t+1} & = \rho \log A_{t} + \epsilon_{t+1} \label{tfp}\tag{6}\\
         \end{align}
-      where \(\epsilon_{t+1}\sim\mathcal{N}(0,\sigma_{\epsilon}^2)\). The tool constructs a log-linear approximation of the equilibrium conditions and solves for the equilibrium values of the endogenous variables in terms of the state variables \(A_t\) and \(K_t\). <!-- Notes on the linearization and solution process are available here: LINK --></p>
+      where \(\epsilon_{t+1}\sim\mathcal{N}(0,\sigma_{\epsilon}^2)\). Equation (1) is the representative household's first-order condition for the optional choice of labor. Equation (2) is the household's Euler equation reflecting an optimal choice of capital for period \(t+1\). Equations (3), (4), and (5) describe the evolution of the aggregate capital stock, the goods market clearing condition, and the production function. Finally, equation (6) indicates that log TFP follows an AR(1) process.</p>
+
+      <p>The tool constructs a log-linear approximation of the equilibrium conditions and solves for the equilibrium values of the endogenous variables in terms of the state variables \(A_t\) and \(K_t\). To learn more, please see my <a href="https://www.briancjenkins.com/simulations/pdf/RBC___Algebraic_Solution.pdf">notes on the solution method</a>.</p>
 
       <h4>Instructions</h4>
       <p>Choose the values the parameters. Then choose the number of periods for the simulation and select which type of simulation that you wish to perform:
