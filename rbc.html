@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+
+    <meta charset="utf-8" />
+
+    <link rel="apple-touch-icon-precomposed" sizes="57x57" href="favicon/apple-touch-icon-57x57.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="favicon/apple-touch-icon-114x114.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="favicon/apple-touch-icon-72x72.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="favicon/apple-touch-icon-144x144.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="60x60" href="favicon/apple-touch-icon-60x60.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="120x120" href="favicon/apple-touch-icon-120x120.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="76x76" href="favicon/apple-touch-icon-76x76.png" />
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="favicon/apple-touch-icon-152x152.png" />
+    <link rel="icon" type="image/png" href="favicon/favicon-196x196.png" sizes="196x196" />
+    <link rel="icon" type="image/png" href="favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/png" href="favicon/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="favicon/favicon-16x16.png" sizes="16x16" />
+    <link rel="icon" type="image/png" href="favicon/favicon-128.png" sizes="128x128" />
+    <meta name="application-name" content="&nbsp;"/>
+    <meta name="msapplication-TileColor" content="#FFFFFF" />
+    <meta name="msapplication-TileImage" content="favicon/mstile-144x144.png" />
+    <meta name="msapplication-square70x70logo" content="favicon/mstile-70x70.png" />
+    <meta name="msapplication-square150x150logo" content="favicon/mstile-150x150.png" />
+    <meta name="msapplication-wide310x150logo" content="favicon/mstile-310x150.png" />
+    <meta name="msapplication-square310x310logo" content="favicon/mstile-310x310.png" />
+
+    
+    
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+    <title>RBC Model Simulation Tool</title>
+
+    <link rel="stylesheet" href="css/foundation.css" />
+    <link href="css/app.css" type="text/css" rel="stylesheet" />
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+
+
+    <script type="text/javascript" async
+      src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    </script>
+    <script src="js/ziggurat.js"></script>
+    <!-- <script src="js/algebra-0.2.6.min.js"></script> -->
+    <script src="js/rbc.js"></script>
+    <script type="text/javascript" src="js/sim-0.26.js"></script>
+    <script src="js/numeric-1.2.6.js"></script>
+  
+
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-55835941-1', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </head>
+  <body>
+    
+    <div class="row">
+      <div class="large-3 columns">
+      </div>
+      <div class="large-9 columns">
+        <ul class="button-group right">
+          <li><a href="https://www.briancjenkins.com" class="button">Brian C Jenkins</a></li>
+          <li><a href="https://www.briancjenkins.com/teaching" class="button">Teaching</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <h1>RBC Model</h1>
+        <hr>
+      </div>
+    </div>
+ 
+
+  <div class="row">
+    <div class="large-12 columns">
+      <h4>Background</h4>
+      <p>This tool simulates the basic RBC model.: 
+        \begin{align}
+          \varphi\left(1-L_t\right)^{-\eta} & = C_t^{-\sigma} W_t \tag{1}\\
+          C_t^{-\sigma} & = \beta E_t \left[C_{t+1}^{-\sigma}R_{t+1} + 1 - \delta)\right] \tag{2}\\
+          W_t & = (1-\alpha)A_tK_t^{\alpha}L_t^{-\alpha} \tag{3}\\
+          R_t & = \alpha A_tK_t^{\alpha-1}L_t^{1-\alpha} \tag{4}\\
+          K_{t+1} & = I_t + (1-\delta)K_t \tag{5}\\
+          Y_t & = C_t + I_t\tag{6}\\
+          Y_t & = A_t K_t^{\alpha}L_t^{1-\alpha} \tag{7}\\
+          \log A_{t+1} & = \rho_a \log A_{t} + \epsilon_{t+1} \tag{8}
+        \end{align}
+      where \(\epsilon_{t+1}\sim\mathcal{N}(0,\sigma_{\epsilon}^2)\). Equation (1) is the representative household's first-order condition for the optional choice of labor. Equation (2) is the household's Euler equation reflecting an optimal choice of capital for period \(t+1\). Equations (3) and (4) are the firm sector's first-order conditions for optimal choices of labor and capital. Equations (5), (6), and (7) describe the evolution of the aggregate capital stock, the goods market clearing condition, and the production function. Finally, equation (8) indicates that log TFP follows an AR(1) process.</p>
+
+      <p>The tool constructs a log-linear approximation of the equilibrium conditions and solves for the equilibrium values of the endogenous variables in terms of the state variables \(A_t\) and \(K_t\). To learn more, please see my <a href="https://www.briancjenkins.com/simulations/pdf/RBC___Algebraic_Solution.pdf">notes on the solution method</a>.</p>
+
+      <h4>Instructions</h4>
+      <p>Choose the values the parameters. Then choose the number of periods for the simulation and select which type of simulation that you wish to perform:
+        <ol>
+          <li><strong>Stochastic simulation</strong>: a new random value for the white noise process \(\epsilon_t\) will be drawn for each period.</li> 
+          <li><strong>Impulse response</strong>: \(\epsilon_t\) will be set to \(\sigma_{\epsilon}\) in period 1 and to 0 in all subsequent periods.</li>
+        </ol>
+      Simulated data are in units of log-deviations of each variable from its steady state. Use the dropdown menu in the upper-right corner of each plot to download the simulated data in csv format.
+      <hr/></p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="large-12 columns">
+
+      <form id="ParameterInput">
+        <fieldset>
+          <legend>Simulation Settings</legend>
+          <div class="row">
+            <div class="large-4 columns">
+              <label for="periods">Number of periods to simulate</label>
+              <input id="periods" type="number" step="1" min="2" value="25">
+            </div>
+            <div class="large-4 columns">
+              <label><strong>Choose simulation type:</strong></label>
+              <input type="radio" name="simType" value="stoch" id="stochSim" checked><label for="stochSim">Stochastic</label>
+              <input type="radio" name="simType" value="ir" id="irSim"><label for="irSim">Impulse response</label>
+            </div>
+            <div class="large-4 columns">
+              &nbsp;
+            </div>
+
+        </fieldset>
+
+        <fieldset>
+          <legend>Parameters</legend>
+          <div class="row">
+            <div class="large-4 columns">
+              <label for="alpha">Capital share of income: \(\alpha\)</label>
+              <input id="alpha" type="number" step="any" value="0.35">
+            </div>
+            <div class="large-4 columns">
+              <label for="delta">Capital depreciation rate: \(\delta\)</label>
+              <input id="delta" type="number" step="any" value="0.025">
+            </div>
+            <div class="large-4 columns">
+              <label for="beta">Subjective discount factor: \(\beta\)</label>
+              <input id="beta" type="number" step="any" min="0" value="0.99">
+            </div>
+            <div class="large-4 columns">
+              <label for="sigma">Intertemporal elasticity of substitution: \(\sigma\)</label>
+              <input id="sigma" type="number" step="any" min="0" value="1.5">
+            </div>
+            <div class="large-4 columns">
+              <label for="eta">Utility exponent on leisure: \(\eta\)</label>
+              <input id="eta" type="number" step="any" min="0" value="1">
+            </div>
+            <div class="large-4 columns">
+              <label for="phi">Weight on utility from leisure: \(\varphi\)</label>
+              <input id="phi" type="number" step="any" min="0" value="1.5">
+            </div>
+            <div class="large-4 columns">
+              <label for="rhoa">TFP autocorrelation: \(\rho\)</label>
+              <input id="rhoa" type="number" step="any" min="0" value="0.9">
+            </div>
+            <div class="large-4 columns">
+              <label for="siga">TFP shock standard deviation: \(\sigma_{\epsilon}\)</label>
+              <input id="siga" type="number" step="any" min="0" value=".01">
+            </div>
+            <div class="large-4 columns">
+            </div>
+
+        </fieldset>
+
+        <div class="large-4 columns">
+          <button type="submit" class="small button" onclick="window.location.href='#plotBox'">Submit</button>  
+        </div>
+      </form>
+        <div class="large-4 columns">
+          <button type="reload" class="small button" onclick="reloadFunction()">Reset</button>
+        </div>
+        <div class="large-4  columns">
+          <button type="download" class="small button" onclick="downloadFunction()">Download CSV</button>
+        </div>
+      <hr/>
+    </div>
+  </div>
+
+  <div class="plotBox" id ="plotBox">
+    <div class="column24">
+      <div id="aProcess" class="plot"></div>
+    </div>
+    <div class="column24">
+      <div id="kProcess" class="plot"></div>
+    </div>
+    <div class="column24">
+      <div id="cProcess" class="plot"></div>
+    </div>
+    <div class="column24">
+      <div id="yProcess" class="plot"></div>
+    </div>
+    <div class="column24">
+      <div id="lProcess" class="plot"></div>
+    </div>
+    <div class="column24">
+      <div id="iProcess" class="plot"></div>
+    </div>
+    <div class="column24">
+      <div id="wProcess" class="plot"></div>
+    </div>
+    <div class="column24">
+      <div id="rProcess" class="plot"></div>
+    </div>
+  </div>
+  
+  <!-- <div class = "row">
+    <div class="plotBox" id="plotBox">
+      <div class="column21">
+        <div id="aProcess" class="plot"></div>
+      </div>
+      <div class="column21">
+        <div id="kProcess" class="plot"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class = "row">
+    <div class="plotBox" id="plotBox">
+      <div class="column21">
+        <div id="cProcess" class="plot"></div>
+      </div>
+      <div class="column21">
+        <div id="yProcess" class="plot"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class = "row">
+    <div class="plotBox" id="plotBox">
+      <div class="column21">
+        <div id="lProcess" class="plot"></div>
+      </div>
+      <div class="column21">
+        <div id="iProcess" class="plot"></div>
+      </div>
+    </div>
+
+    <div class = "row">
+    <div class="plotBox" id="plotBox">
+      <div class="column21">
+        <div id="wProcess" class="plot"></div>
+      </div>
+      <div class="column21">
+        <div id="rProcess" class="plot"></div>
+      </div>
+    </div>
+  </div> -->
+
+  
+  <footer class="row">
+    <div class="large-12 columns">
+      <hr/>
+      <div class="row">
+        <div class="large-12 columns">
+          <p>Created by <a href="https://www.briancjenkins.com">Brian C Jenkins</a> of the Department of Economics, UC Irvine with assistance from <a href="https://pmac.io">Paul McLanahan</a> of <a href="https://www.mozilla.org">Mozilla</a>. Please send feedback to Brian by <a href="mailto:bcjenkin@uci.edu">email</a>.</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+    
+  </body>
+</html>
